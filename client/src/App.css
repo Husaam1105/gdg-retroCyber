@@ -1,0 +1,144 @@
+/* Global styles for the retro-cyber terminal application */
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&display=swap');
+
+/* Reset and base styles */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'JetBrains Mono', 'Courier New', monospace;
+  background: #0a0a0a;
+  color: #00ff41;
+  overflow-x: hidden;
+  line-height: 1.4;
+}
+
+/* Custom scrollbar for terminal */
+.scrollbar-terminal::-webkit-scrollbar {
+  width: 8px;
+}
+
+.scrollbar-terminal::-webkit-scrollbar-track {
+  background: #0a0a0a;
+  border: 1px solid #00ff41;
+}
+
+.scrollbar-terminal::-webkit-scrollbar-thumb {
+  background: #00ff41;
+  border-radius: 4px;
+}
+
+.scrollbar-terminal::-webkit-scrollbar-thumb:hover {
+  background: #0066ff;
+}
+
+/* Custom selection colors */
+::selection {
+  background: #00ff41;
+  color: #0a0a0a;
+}
+
+::-moz-selection {
+  background: #00ff41;
+  color: #0a0a0a;
+}
+
+/* Terminal text effects */
+.terminal-text {
+  text-shadow: 0 0 10px currentColor;
+}
+
+/* Glitch effect keyframes */
+@keyframes glitch {
+  0% { transform: translate(0); }
+  20% { transform: translate(-2px, 2px); }
+  40% { transform: translate(-2px, -2px); }
+  60% { transform: translate(2px, 2px); }
+  80% { transform: translate(2px, -2px); }
+  100% { transform: translate(0); }
+}
+
+/* Scanlines animation */
+@keyframes scanlines {
+  0% { transform: translateY(-100%); }
+  100% { transform: translateY(100vh); }
+}
+
+/* Blinking cursor animation */
+@keyframes blink {
+  0%, 50% { opacity: 1; }
+  51%, 100% { opacity: 0; }
+}
+
+/* Typing animation */
+@keyframes typing {
+  from { width: 0; }
+  to { width: 100%; }
+}
+
+/* Hidden secret element hover effect */
+.hover-secret-element:hover .hidden-command-clue {
+  opacity: 1 !important;
+  animation: glitch 0.3s ease-in-out;
+}
+
+/* Focus styles for accessibility */
+input:focus,
+button:focus {
+  outline: 2px solid #00ff41;
+  outline-offset: 2px;
+}
+
+/* Responsive design adjustments */
+@media (max-width: 768px) {
+  body {
+    font-size: 14px;
+  }
+  
+  .terminal-content {
+    padding: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  body {
+    font-size: 12px;
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  body {
+    background: #000000;
+    color: #ffffff;
+  }
+  
+  .text-cyber-green {
+    color: #ffffff !important;
+  }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Print styles */
+@media print {
+  body {
+    background: white;
+    color: black;
+  }
+  
+  .scanlines,
+  .glitch-effects {
+    display: none;
+  }
+}

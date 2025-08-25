@@ -1,0 +1,29 @@
+{
+  "name": "retro-cyber-terminal-challenge",
+  "version": "1.0.0",
+  "description": "GDG Digital Interface Challenge - Retro-Cyber Terminal Application",
+  "main": "server/index.js",
+  "scripts": {
+    "dev": "concurrently \"npm run server\" \"npm run client\"",
+    "server": "cd server && npm run dev",
+    "client": "cd client && npm run dev",
+    "build": "cd client && npm run build",
+    "start": "cd server && npm start",
+    "install-all": "npm install && cd server && npm install && cd ../client && npm install"
+  },
+  "keywords": [
+    "gdg",
+    "terminal",
+    "retro",
+    "cyber",
+    "authentication",
+    "puzzle"
+  ],
+  "author": "GDG Challenge Participant",
+  "license": "MIT",
+  "devDependencies": {
+    "autoprefixer": "^10.4.21",
+    "concurrently": "^8.2.2",
+    "tailwindcss": "^4.1.12"
+  }
+}
