@@ -51,8 +51,7 @@ This application fulfills the requirements of the **GDG Digital Interface Challe
 
 The application includes a three-step puzzle mechanism:
 
-### Step 1: Source Code Inspection
-Hidden clue in React component comments:
+### Step 1: Decipher Code 
 ```jsx
 {/* Cipher: "ohjdo-ohjoh-2024" */}
 {/* Hint: Sometimes justice is just 3 steps back... */}
@@ -126,7 +125,7 @@ npm run dev
 
 ### Investigation
 - `scan` - Scan for system anomalies
-- `inspect` - Inspect system components
+- `case` - Get the current case briefing and clue
 - `reveal-secret` - Execute final puzzle command (auth required)
 - `decipher <clue>` - Decipher a coded message
 - `repair <code>` - Repair a corrupted command 
