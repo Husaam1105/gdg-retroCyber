@@ -5,8 +5,15 @@ import { puzzleAPI, systemAPI } from './api';
  * Handles all terminal commands and their execution
  */
 
+// Track discovered clues
+let discoveredClues = {
+  clue1: false,
+  clue2: false,
+  clue3: false
+};
+
 export const commandProcessor = async (command, context) => {
-  const { isAuthenticated, currentUser, login, register, logout, discoveredClues, setDiscoveredClues } = context;
+  const { isAuthenticated, currentUser, login, register, logout } = context;
   const [cmd, ...args] = command.toLowerCase().split(' ');
 
   switch (cmd) {
@@ -26,13 +33,6 @@ export const commandProcessor = async (command, context) => {
       };
 
     case 'decipher':
-      if (!isAuthenticated) {
-        return {
-          success: false,
-          error: 'ACCESS_DENIED: Detective authentication required to use this tool.'
-        };
-      }
-
       if (args.length === 0) {
         return {
           success: false,
@@ -42,9 +42,16 @@ export const commandProcessor = async (command, context) => {
       
       const code = args.join(' ').toLowerCase();
 
-      // "ohjdo-ohjoh-2024" deciphered with -3 shift is "legal-eagle-2024"
-      if (code === 'legal-eagle-2024' || code === 'legaleagle2024') {
-        setDiscoveredClues(prev => ({ ...prev, clue1: true }));
+       if (!isAuthenticated) {
+        return {
+          success: false,
+          error: 'ACCESS_DENIED: Detective authentication required for evidence access'
+        };
+      }
+
+      const correctDecipheredCode = 'legal-eagle-2024';   
+      if (code === correctDecipheredCode) {
+        discoveredClues.clue1 = true;
         return {
           success: true,
           output: [
@@ -59,8 +66,8 @@ export const commandProcessor = async (command, context) => {
             '"oh looks like there\'s something wrong with the command..."',
             '',
             '💡 HINT: The corrupted command is "7226". It is encrypted with a classic mobile keypad (T9) encryption. Use the hint to decipher it.',
-            '     7 = PQRS, 2 = ABC, 6 = MNO',
-            '     Translate digits into letters to repair the command.',
+            '      7 = PQRS, 2 = ABC, 6 = MNO',
+            '      Translate digits into letters to repair the command.',
             '',
             '🔧 FIX IT: Use the "repair" command to fix the corrupted command and reveal the next step.',
 
@@ -95,8 +102,8 @@ export const commandProcessor = async (command, context) => {
           '🔍 INVESTIGATION TOOLS:',
           '  case              - Get the current case briefing and clue',
           '  decipher <clue>   - Decipher a coded message',
-          discoveredClues.clue1 ? '  repair <code>   - Repair a corrupted command' : '  [LOCKED]          - Decipher first clue to unlock',
-          discoveredClues.clue2 ? '  scan              - Scan for system vulnerabilities' : '  [LOCKED]          - Repair command to unlock',
+          '  repair <code>   - Repair a corrupted command',
+          '  scan              - Scan for system vulnerabilities',
           '',
           '💡 CASE BRIEFING:',
           '  Sean "Diddy" Combs legal team needs your help!',
@@ -104,15 +111,11 @@ export const commandProcessor = async (command, context) => {
           '  Find all 3 clues to recover the files and save the case.',
           '',
           '🎯 CURRENT OBJECTIVE:',
-          !discoveredClues.clue1 ? '  Use the "case" command to begin your investigation.' :
-          !discoveredClues.clue2 ? '  Use "repair" to find the second clue' :
-          !discoveredClues.clue3 ? '  Look for interactive elements to find the final clue' :
-          '  All clues found! Use "access-evidence" to complete mission',
+          '  Use the "case" command to begin your investigation.',
           '',
           '═══════════════════════════════════════'
         ]
       };
-
     case 'repair':
       if (!discoveredClues.clue1) {
         return {
@@ -123,7 +126,7 @@ export const commandProcessor = async (command, context) => {
       
       const repairCode = args.join(' ').toLowerCase();
       if (repairCode === 'scan') {
-        setDiscoveredClues(prev => ({ ...prev, clue2: true }));
+        discoveredClues.clue2 = true;
         return {
           success: true,
           output: [
@@ -204,6 +207,7 @@ export const commandProcessor = async (command, context) => {
           error: 'ACCESS_DENIED: Repair the corrupted command to unlock scan function'
         };
       }
+
       
       return {
         success: true,
@@ -228,29 +232,6 @@ export const commandProcessor = async (command, context) => {
           '',
           '💡 DETECTIVE TIP: The final clue is hiding in plain sight. Check every corner!'
         ]
-      };
-
-    case 'inspect':
-      return {
-        success: true,
-        output: [
-          '🔬 SYSTEM INSPECTION',
-          '──────────────────────',
-          'Analyzing system components...',
-          '',
-          '🧩 FINDINGS:',
-          '1. Terminal interface contains embedded artifacts',
-          '2. Interactive hover zones detected',
-          '3. Protected API endpoints identified for evidence access.',
-          '',
-          isAuthenticated ? [
-            '🔓 AUTHORIZED ACCESS DETECTED:',
-            'The final phrase is hidden in a hover zone. Find it to unlock the secret.'
-          ] : [
-            '🔒 UNAUTHORIZED ACCESS - GUEST MODE:',
-            'Authentication required to reveal the final phrase.'
-          ]
-        ].flat()
       };
 
     case 'login':
@@ -375,6 +356,7 @@ export const commandProcessor = async (command, context) => {
       };
 
     case 'access-evidence':
+      discoveredClues.clue3 = true;
       if (!isAuthenticated) {
         return {
           success: false,
@@ -382,14 +364,12 @@ export const commandProcessor = async (command, context) => {
         };
       }
 
-      if (!discoveredClues.clue2) {
+      if (!discoveredClues.clue3) {
         return {
           success: false,
           error: 'EVIDENCE_LOCKED: Complete investigation steps to unlock evidence access'
         };
       }
-      
-      setDiscoveredClues(prev => ({ ...prev, clue3: true }));
 
       try {
         const secretData = await puzzleAPI.revealSecret();
@@ -414,7 +394,7 @@ export const commandProcessor = async (command, context) => {
               `   • Solved: ${new Date(secretData.data.completedAt).toLocaleString()}`,
               '',
               '🛤️  INVESTIGATION PATHWAY:',
-              ...secretData.data.additionalInfo.totalSteps.map((step, i) => 
+              ...secretData.data.additionalInfo.totalSteps.map((step, i) =>
                 `   ${i + 1}. ${step.replace('_', ' ')} ✅`
               ),
               '',
@@ -425,7 +405,7 @@ export const commandProcessor = async (command, context) => {
               'saved the case and ensured justice prevails!',
               '',
               '💭 DETECTIVE WISDOM:',
-              `   "${secretData.data.additionalInfo.hint}"`,
+              `     "${secretData.data.additionalInfo.hint}"`,
               '',
               '═══════════════════════════════════════',
               '🎉 CONGRATULATIONS, DETECTIVE!',
