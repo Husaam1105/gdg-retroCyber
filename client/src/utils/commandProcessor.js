@@ -5,7 +5,8 @@ import { puzzleAPI, systemAPI } from './api';
  * Handles all terminal commands and their execution
  */
 
-// Track discovered clues
+// Track discovered clues in a global state
+// This state persists throughout the session.
 let discoveredClues = {
   clue1: false,
   clue2: false,
@@ -22,7 +23,7 @@ export const commandProcessor = async (command, context) => {
         success: true,
         output: [
           '=========================================================',
-          '                 HIDDEN_CLUE_1: Cipher Challenge',
+          '         HIDDEN_CLUE_1: Cipher Challenge',
           '=========================================================',
           '',
           'Cipher: "ohjdo-ohjoh-2024"',
@@ -42,14 +43,14 @@ export const commandProcessor = async (command, context) => {
       
       const code = args.join(' ').toLowerCase();
 
-       if (!isAuthenticated) {
+        if (!isAuthenticated) {
         return {
           success: false,
           error: 'ACCESS_DENIED: Detective authentication required for evidence access'
         };
       }
 
-      const correctDecipheredCode = 'legal-eagle-2024';   
+      const correctDecipheredCode = 'legal-eagle-2024';    
       if (code === correctDecipheredCode) {
         discoveredClues.clue1 = true;
         return {
@@ -66,8 +67,8 @@ export const commandProcessor = async (command, context) => {
             '"oh looks like there\'s something wrong with the command..."',
             '',
             '💡 HINT: The corrupted command is "7226". It is encrypted with a classic mobile keypad (T9) encryption. Use the hint to decipher it.',
-            '      7 = PQRS, 2 = ABC, 6 = MNO',
-            '      Translate digits into letters to repair the command.',
+            '     7 = PQRS, 2 = ABC, 6 = MNO',
+            '     Translate digits into letters to repair the command.',
             '',
             '🔧 FIX IT: Use the "repair" command to fix the corrupted command and reveal the next step.',
 
@@ -86,24 +87,24 @@ export const commandProcessor = async (command, context) => {
         output: [
           '🕵️ LEGAL INVESTIGATION TERMINAL',
           '═══════════════════════════════════════',
-          '         DETECTIVE COMMANDS',
+          '       DETECTIVE COMMANDS',
           '═══════════════════════════════════════',
           '',
           '📋 BASIC OPERATIONS:',
-          '  help              - Show this help menu',
-          '  status            - Show system status',
-          '  whoami            - Display current user info',
+          '  help             - Show this help menu',
+          '  status           - Show system status',
+          '  whoami           - Display current user info',
           '',
           '🔐 SECURITY ACCESS:',
           '  login <username> <password>  - Gain clearance',
           '  register <username> <password> - Create new agent profile',
-          '  logout            - Revoke security clearance',
+          '  logout           - Revoke security clearance',
           '',
           '🔍 INVESTIGATION TOOLS:',
-          '  case              - Get the current case briefing and clue',
-          '  decipher <clue>   - Decipher a coded message',
-          '  repair <code>   - Repair a corrupted command',
-          '  scan              - Scan for system vulnerabilities',
+          '  case             - Get the current case briefing and clue',
+          '  decipher <clue>  - Decipher a coded message',
+          '  repair <code>    - Repair a corrupted command',
+          '  scan             - Scan for system vulnerabilities',
           '',
           '💡 CASE BRIEFING:',
           '  Sean "Diddy" Combs legal team needs your help!',
@@ -266,7 +267,7 @@ export const commandProcessor = async (command, context) => {
               'files are hidden in this system. Your job is to find',
               'all 3 clues to recover the files and save the case.',
               '',
-              '💡 START HERE: Look around the terminal for hidden clues...'
+              '💡 Use the "case" command to begin your investigation.'
             ]
           };
         } else {
@@ -283,6 +284,9 @@ export const commandProcessor = async (command, context) => {
       }
 
     case 'register':
+      // The logic here is sound. It checks for two arguments,
+      // and if the user is already authenticated.
+      // The `register` function call is awaited, and its result is checked.
       if (args.length < 2) {
         return {
           success: false,
@@ -314,10 +318,9 @@ export const commandProcessor = async (command, context) => {
               'Critical evidence files are hidden in this system.',
               'Find all 3 clues to recover the files and save the case.',
               '',
-              '💡 BEGIN INVESTIGATION: Look for hidden clues "IN" the TerminalWindow...',
+              '💡  Use the "case" command to begin your investigation.',
               '',
               '',
-              'HINT: Dig deeper into its blueprints (`TerminalWindow.jsx`) to uncover the hidden clue.'
             ]
           };
         } else {
@@ -385,17 +388,17 @@ export const commandProcessor = async (command, context) => {
               `🔑 Access Key: ${secretData.data.secretKey}`,
               '',
               '🎖️  DETECTIVE ACHIEVEMENT:',
-              `     ${secretData.data.achievement}`,
-              `     Rank: ${secretData.data.level}`,
+              `      ${secretData.data.achievement}`,
+              `      Rank: ${secretData.data.level}`,
               '',
               '📊 INVESTIGATION SUMMARY:',
-              `   • Evidence Pieces: ${secretData.data.additionalInfo.cluesFound}/3 ✅`,
-              `   • Case Complexity: ${secretData.data.additionalInfo.difficulty}`,
-              `   • Solved: ${new Date(secretData.data.completedAt).toLocaleString()}`,
+              `    • Evidence Pieces: ${secretData.data.additionalInfo.cluesFound}/3 ✅`,
+              `    • Case Complexity: ${secretData.data.additionalInfo.difficulty}`,
+              `    • Solved: ${new Date(secretData.data.completedAt).toLocaleString()}`,
               '',
               '🛤️  INVESTIGATION PATHWAY:',
               ...secretData.data.additionalInfo.totalSteps.map((step, i) =>
-                `   ${i + 1}. ${step.replace('_', ' ')} ✅`
+                `    ${i + 1}. ${step.replace('_', ' ')} ✅`
               ),
               '',
               '⚖️  LEGAL IMPACT:',
@@ -405,7 +408,7 @@ export const commandProcessor = async (command, context) => {
               'saved the case and ensured justice prevails!',
               '',
               '💭 DETECTIVE WISDOM:',
-              `     "${secretData.data.additionalInfo.hint}"`,
+              `      "${secretData.data.additionalInfo.hint}"`,
               '',
               '═══════════════════════════════════════',
               '🎉 CONGRATULATIONS, DETECTIVE!',
